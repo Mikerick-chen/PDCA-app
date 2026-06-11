@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDCA Time Master</title>
+  <!-- 深色模式無閃爍（no-FOUC）：在套用樣式前，先依偏好設好 <html data-theme>。 -->
+  <script>
+    (function () {
+      try {
+        var p = localStorage.getItem('pdca_theme') || 'system';
+        var dark = p === 'dark' || (p !== 'light' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      } catch (e) {}
+    })();
+  </script>
+  <!-- 圖示字型改為「本地自帶」（同源、可快取），不再依賴 CDN，避免重新載入時出現方塊（豆腐字）。 -->
+  <link rel="preload" href="/vendor/tabler/fonts/tabler-icons.woff2?v3.5.0" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/vendor/tabler/tabler-icons.min.css?v=3" />
+  <link rel="stylesheet" href="/css/styles.css?v=13" />
+</head>
+<body>
+  <!-- 應用根容器；實際畫面由 app.js 動態渲染 -->
+  <div id="root"></div>
+
+  <!-- 圖表函式庫（依 SPEC 1.8，MAY 使用輕量方案） -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="/js/app.js?v=13"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://schema.zeabur.app/zeabur.json",
+  "name": "pdca-time-master",
+  "build": {
+    "command": "npm install"
+  },
+  "start": {
+    "command": "node --experimental-sqlite server.js"
+  }
+}
