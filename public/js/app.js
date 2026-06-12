@@ -1798,3 +1798,8 @@ boot();
 startSync(); // 註冊跨裝置同步（聚焦/切回分頁/每 20 秒安靜重抓）；未登入時自動失效
 registerCmdk(); // 註冊 ⌘K / Ctrl+K 命令面板快捷鍵（未登入時自動失效）
 setupOverlayA11y(); // 浮層（modal/命令面板）焦點鎖、Esc 關閉、焦點還原（D4）
+
+// 註冊 Service Worker（PWA：可安裝到手機 + App 殼離線開啟）；失敗不影響功能。
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); });
+}

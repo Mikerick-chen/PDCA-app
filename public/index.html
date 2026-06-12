@@ -2,8 +2,20 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>PDCA Time Master</title>
+  <!-- PWA：可安裝到手機主畫面、全螢幕開啟 -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#378add" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="icon" href="/icons/icon-192.png" sizes="192x192" />
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+  <!-- iOS：加入主畫面後的圖示、全螢幕與標題 -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="PDCA" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png" />
   <!-- 深色模式無閃爍（no-FOUC）：在套用樣式前，先依偏好設好 <html data-theme>。 -->
   <script>
     (function () {
@@ -23,8 +35,8 @@
   <!-- 應用根容器；實際畫面由 app.js 動態渲染 -->
   <div id="root"></div>
 
-  <!-- 圖表函式庫（依 SPEC 1.8，MAY 使用輕量方案） -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <script src="/js/app.js?v=13"></script>
+  <!-- 圖表函式庫：改為本地自帶（PWA 離線可用，移除最後一個 CDN 依賴） -->
+  <script src="/vendor/chart/chart.umd.min.js?v=1"></script>
+  <script src="/js/app.js?v=14"></script>
 </body>
 </html>

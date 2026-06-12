@@ -1,0 +1,17 @@
+{
+  "name": "PDCA Time Master",
+  "short_name": "PDCA",
+  "description": "個人持續改善與待辦工具：每天以 Plan-Do-Check-Act 循環記錄，搭配行事曆、日記、備忘錄、讀書會。",
+  "lang": "zh-Hant",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#e9ebf1",
+  "theme_color": "#378add",
+  "icons": [
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" },
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
