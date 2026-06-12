@@ -126,6 +126,8 @@ html, body {
   background: var(--bg);
   font-size: var(--fs-body);
   line-height: var(--lh-normal);
+  /* 頁面層級防線：任何元素（尤其頂列）若一時超出視窗寬，都不會產生整頁橫向捲動／右側露白。 */
+  overflow-x: hidden;
 }
 
 /* 數字/時間一律使用等寬數字（tabular-nums），跳動時不會左右抖動 */
@@ -534,14 +536,16 @@ textarea, .wrap { overflow-wrap: anywhere; word-break: break-word; }
 
 /* 小手機（≤ 560px）：頂部列收斂，避免擁擠/水平溢出（呼應 SPEC ≤380px MUST）。 */
 @media (max-width: 560px) {
-  .topbar { gap: 8px; padding: 8px 10px; }
+  .topbar { gap: 6px; padding: 8px 10px; }
+  /* 頂列防溢出：允許各子項收縮，並把非必要按鈕收起，確保頭像/登出不再被切到畫面外 */
+  .topbar > * { flex-shrink: 0; }
+  .cmdk-trigger { display: none; }                 /* ⌘K 命令面板：桌機功能，手機收起省空間 */
   /* 外層 padding 收窄，讓卡片更貼近螢幕左右邊緣（上下保留呼吸感） */
   .main { padding: 10px 8px 16px; }
   .countdown-pill { max-width: none; padding: 6px 9px; }
   .countdown-pill #cdPillText { display: none; }   /* 只留旗標圖示，點擊仍可開啟管理 */
-  .date-switch { gap: 4px; }
-  .date-switch input[type="date"] { max-width: 130px; }
-  .cmdk-trigger { padding: 0 8px; }
+  .date-switch { gap: 4px; min-width: 0; }
+  .date-switch input[type="date"] { max-width: 124px; min-width: 0; }
   .study-timer { padding: 14px; }
   .st-display { font-size: 34px; }
 
@@ -557,10 +561,13 @@ textarea, .wrap { overflow-wrap: anywhere; word-break: break-word; }
   .stat-card { padding: 7px 9px; }
 }
 
-/* 極窄（≤ 430px）：再收斂頂部列日期前/後鈕（日期欄與 ⌘K 命令面板仍可換日），確保不溢出。 */
+/* 極窄（≤ 430px）：再收斂頂部列。日期前/後鈕收起（仍可用日期欄換日），
+   並把「專注時鐘」按鈕收起，確保漢堡/日期/主題/頭像/登出這幾個必要鍵永遠完整可見、不被切出畫面。 */
 @media (max-width: 430px) {
   .date-switch button { display: none; }
-  .topbar { gap: 6px; }
+  .topbar { gap: 6px; padding: 8px; }
+  #btnClock { display: none; }
+  .date-switch input[type="date"] { max-width: 112px; }
 }
 
 /* 超寬螢幕：避免一行字過長，內容維持可讀寬度（.view 已 max-width:880 置中；此處放寬看板/清單上限）。 */
