@@ -219,7 +219,9 @@ textarea, .wrap { overflow-wrap: anywhere; word-break: break-word; }
 }
 
 /* ---------- 應用骨架 ---------- */
-.app { display: flex; flex-direction: column; height: 100vh; }
+/* height 改用 dvh（dynamic viewport）：手機瀏覽器網址列收合時，App 仍能填滿真實可視高度，
+   消除底部大片留白；100vh 作為不支援 dvh 的舊瀏覽器後援。 */
+.app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 .topbar {
   position: sticky; top: 0; z-index: 20;
   display: flex; align-items: center; gap: 12px;
@@ -492,18 +494,23 @@ textarea, .wrap { overflow-wrap: anywhere; word-break: break-word; }
 
 /* ---------- 手機窄螢幕（≤ 720px） ---------- */
 @media (max-width: 720px) {
-  .pdca-grid { grid-template-columns: 1fr; }
+  .pdca-grid { grid-template-columns: 1fr; gap: 10px; }
   .sidebar { width: 64px; }
   .nav-item span:not(.ti) { display: none; }
   .topbar .brand span:last-child { display: none; }
   .cmdk-kbd { display: none; }
   .focus-clock .time { font-size: 26vw; }
+  /* 單欄堆疊時收斂標題下方留白，內容更快進入視野 */
+  .view-title { margin-bottom: 12px; }
+  /* 空容器（尚無計畫）不再撐高，避免大片留白 */
+  .plan-items:empty, .do-items:empty { min-height: 0; }
 }
 
 /* 小手機（≤ 560px）：頂部列收斂，避免擁擠/水平溢出（呼應 SPEC ≤380px MUST）。 */
 @media (max-width: 560px) {
   .topbar { gap: 8px; padding: 8px 10px; }
-  .main { padding: 12px; }
+  /* 外層 padding 收窄，讓卡片更貼近螢幕左右邊緣（上下保留呼吸感） */
+  .main { padding: 10px 8px 16px; }
   .countdown-pill { max-width: none; padding: 6px 9px; }
   .countdown-pill #cdPillText { display: none; }   /* 只留旗標圖示，點擊仍可開啟管理 */
   .date-switch { gap: 4px; }
@@ -511,6 +518,17 @@ textarea, .wrap { overflow-wrap: anywhere; word-break: break-word; }
   .cmdk-trigger { padding: 0 8px; }
   .study-timer { padding: 14px; }
   .st-display { font-size: 34px; }
+
+  /* 卡片留白收斂：內距、標題與輸入區的最小高度都更緊湊，減少空蕩感 */
+  .pdca-cell { padding: 12px 12px; }
+  .pdca-cell h3 { margin-bottom: 6px; }
+  .pdca-cell textarea { min-height: 64px; }
+  .hint-line { padding: 4px 2px; }
+  .empty-state { padding: 24px 0; }
+  /* 統計卡與圖表更貼合內容，避免下方空白 */
+  .check-chart-wrap { margin-top: 6px; }
+  .stat-row { margin-top: 8px; }
+  .stat-card { padding: 7px 9px; }
 }
 
 /* 極窄（≤ 430px）：再收斂頂部列日期前/後鈕（日期欄與 ⌘K 命令面板仍可換日），確保不溢出。 */
