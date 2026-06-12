@@ -17,7 +17,14 @@ const state = {
   calMonth: todayStr().slice(0, 7),
   currentLog: null,
   importantDates: [],
-  navCollapsed: localStorage.getItem('pdca_nav_collapsed') === '1', // 側欄是否收合（純 UI 狀態）
+  // 側欄收合狀態（純 UI）：有存過偏好就照偏好；沒存過時，手機（≤720px）預設收合，
+  // 讓抽屜式側欄一開始是關閉的、主內容拿到整個螢幕寬度。
+  navCollapsed: (function () {
+    var v = localStorage.getItem('pdca_nav_collapsed');
+    if (v === '1') return true;
+    if (v === '0') return false;
+    return !!(window.matchMedia && window.matchMedia('(max-width: 720px)').matches);
+  })(),
 };
 let chart = null;
 let chartTimer = null;            // Check 圖表刷新的 debounce 計時器（避免連點時整張重畫）
@@ -530,8 +537,13 @@ function renderApp() {
           ${navItem('study', 'ti-users-group', '讀書會')}
         </nav>
         <main class="main" id="main" tabindex="-1" aria-label="主要內容"></main>
+        <button class="nav-backdrop" id="navBackdrop" aria-label="關閉選單" tabindex="-1"></button>
       </div>
     </div>`;
+
+  // 手機抽屜遮罩：點一下關閉側欄（僅在展開時可見/可點）。
+  const bd = document.getElementById('navBackdrop');
+  if (bd) bd.onclick = () => { if (!state.navCollapsed) toggleNav(); };
 
   document.getElementById('btnLogout').onclick = logout;
   document.getElementById('btnClock').onclick = openFocusClock;
@@ -549,7 +561,12 @@ function renderApp() {
     if (state.view === 'pdca' || state.view === 'diary') renderView();
   };
   document.querySelectorAll('.nav-item').forEach((n) => {
-    n.onclick = () => { state.view = n.dataset.view; renderView(); };
+    n.onclick = () => {
+      state.view = n.dataset.view;
+      // 手機：選完項目自動收合抽屜，讓主內容立刻全寬呈現。
+      if (!state.navCollapsed && window.matchMedia && window.matchMedia('(max-width: 720px)').matches) toggleNav();
+      renderView();
+    };
   });
 
   loadImportantDates();

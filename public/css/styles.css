@@ -307,8 +307,12 @@ textarea, .wrap { overflow-wrap: anywhere; word-break: break-word; }
 .app.nav-collapsed .sidebar { width: 0; padding-left: 0; padding-right: 0; border-right-color: transparent; }
 /* 頂部列的收合切換鈕（漢堡）：放最左側，常駐可見。 */
 .nav-toggle { font-size: 20px; }
+/* 抽屜遮罩：桌機不使用，預設隱藏；僅在手機抽屜展開時由媒體查詢顯示。 */
+.nav-backdrop { display: none; }
 
-.main { flex: 1; min-width: 0; overflow-y: auto; padding: 16px; }
+/* min-width:0 讓這個 flex 子項可收縮到比內容更窄（Flexbox 子項預設 min-width:auto 不肯縮，
+   是「主內容撐破版面」最常見主因）；overflow-x:hidden 為最後防線，攔截任何殘餘橫向溢出。 */
+.main { flex: 1; min-width: 0; overflow-y: auto; overflow-x: hidden; padding: 16px; }
 .view { max-width: 880px; margin: 0 auto; }
 .view-title { font-size: var(--fs-title); font-weight: var(--fw-semibold); margin: 0 0 16px; }
 
@@ -325,6 +329,9 @@ textarea, .wrap { overflow-wrap: anywhere; word-break: break-word; }
 .pdca-cell {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   border-left: 3px solid var(--plan); padding: 12px; display: flex; flex-direction: column;
+  /* 關鍵：grid/flex 子項預設 min-width:auto，會以「內容固有寬度」為下限而不肯收縮，
+     導致內部的圖表 Canvas / 不換行長字撐破卡片 → 主內容溢出。改為 0 允許收縮。 */
+  min-width: 0;
 }
 .pdca-cell.plan { border-left-color: var(--plan); }
 .pdca-cell.do { border-left-color: var(--do); }
@@ -376,7 +383,10 @@ textarea, .wrap { overflow-wrap: anywhere; word-break: break-word; }
 .cp-bar { height: 8px; background: var(--surface-hover); border-radius: 999px; overflow: hidden; margin: 6px 0 4px; }
 .cp-fill { height: 100%; background: linear-gradient(90deg, #fac775, #ef9f27); border-radius: 999px; transition: width 0.3s; }
 .cp-sub { font-size: 11px; color: var(--text-muted); }
-.check-chart-wrap { margin-top: 8px; }
+/* Chart.js（responsive + maintainAspectRatio:false）需要一個「寬度受限、相對定位」的容器；
+   canvas 加 max-width:100% 作雙重保險，確保圖表永遠不會反過來把父層撐寬。 */
+.check-chart-wrap { margin-top: 8px; position: relative; width: 100%; min-width: 0; }
+.check-chart-wrap canvas { max-width: 100% !important; height: auto; }
 .stat-row { display: flex; gap: 8px; margin-top: 10px; }
 .stat-card { flex: 1; background: var(--surface-2); border-radius: 8px; padding: 8px 10px; }
 .stat-card .label { font-size: 11px; color: var(--text-muted); }
@@ -495,8 +505,6 @@ textarea, .wrap { overflow-wrap: anywhere; word-break: break-word; }
 /* ---------- 手機窄螢幕（≤ 720px） ---------- */
 @media (max-width: 720px) {
   .pdca-grid { grid-template-columns: 1fr; gap: 10px; }
-  .sidebar { width: 64px; }
-  .nav-item span:not(.ti) { display: none; }
   .topbar .brand span:last-child { display: none; }
   .cmdk-kbd { display: none; }
   .focus-clock .time { font-size: 26vw; }
@@ -504,6 +512,24 @@ textarea, .wrap { overflow-wrap: anywhere; word-break: break-word; }
   .view-title { margin-bottom: 12px; }
   /* 空容器（尚無計畫）不再撐高，避免大片留白 */
   .plan-items:empty, .do-items:empty { min-height: 0; }
+
+  /* —— Q3：手機改用「抽屜式側欄（off-canvas）」 ——
+     桌機是「側欄 + 主內容」並排；但在手機上 64px 的圖示欄會吃掉寬度、把主內容擠窄。
+     改為：側欄抽離排版流（position:fixed）滑出於內容之上，主內容永遠拿到 100% 寬度。
+     沿用既有的 nav-collapsed 開關：收合=滑出畫面、展開=滑入。 */
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 45;
+    width: 232px; max-width: 80vw; padding: 12px 10px;
+    transform: translateX(-100%); transition: transform 0.24s cubic-bezier(0.2, 0.7, 0.3, 1);
+    box-shadow: var(--shadow-hover); will-change: transform;
+  }
+  .nav-item span:not(.ti) { display: inline; }   /* 抽屜內顯示完整文字標籤，更好點 */
+  .app:not(.nav-collapsed) .sidebar { transform: translateX(0); }
+  /* 半透明遮罩：抽屜打開（.app 未收合）時才出現，蓋住主內容、點一下即關閉。 */
+  .app:not(.nav-collapsed) .nav-backdrop {
+    display: block; position: fixed; inset: 0; z-index: 44;
+    background: rgba(10, 12, 18, 0.4); border: none; animation: maskIn 0.2s ease both;
+  }
 }
 
 /* 小手機（≤ 560px）：頂部列收斂，避免擁擠/水平溢出（呼應 SPEC ≤380px MUST）。 */
